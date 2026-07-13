@@ -1,0 +1,15 @@
+# Sensitive environment files and credentials
+.env
+*.pem
+*.key
+*.pub
+oci-creds/
+.oci/
+
+# Logs
+*.log
+
+# OS / IDE files
+.DS_Store
+.idea/
+.qodo/
