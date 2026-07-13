@@ -69,6 +69,7 @@ while true; do
         echo "=========================================================="
         
         # Alerta Sonoro no Laptop
+        # shellcheck disable=SC2034
         for i in {1..5}; do echo -e '\a'; sleep 0.5; done
         
         # Disparo para o Telegram
