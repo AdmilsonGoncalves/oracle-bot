@@ -75,9 +75,9 @@ while true; do
         send_telegram "✅ SUCESSO! A sua instância ARM de 2 vCPUs e 12GB de RAM foi criada na Oracle Cloud de São Paulo! 🎉"
         break
     else
-        # Verifica se é erro comum de falta de capacidade (Out of host capacity / LimitExceeded / InternalError)
-        if echo "$LAUNCH_OUTPUT" | grep -Ei "Out of host capacity|LimitExceeded|Capacity|InternalError|TooManyRequests" > /dev/null; then
-            echo "[$(date '+%Y-%m-%d %H:%M:%S')] Sem capacidade ARM no momento. Nova tentativa em 60 segundos..."
+        # Verifica se é erro comum de falta de capacidade ou falha transitória de rede/API (timeout)
+        if echo "$LAUNCH_OUTPUT" | grep -Ei "Out of host capacity|LimitExceeded|Capacity|InternalError|TooManyRequests|timed out|timeout|RequestException|ConnectionError|ServiceUnavailable|50[0-4]" > /dev/null; then
+            echo "[$(date '+%Y-%m-%d %H:%M:%S')] Sem capacidade ARM ou instabilidade temporária na API OCI (timeout). Nova tentativa em 60 segundos..."
         else
             # Erro inesperado (ex: parâmetro inválido, permissão, subnet incorreta)
             echo "[$(date '+%Y-%m-%d %H:%M:%S')] Erro na requisição de criação:"
