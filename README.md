@@ -6,11 +6,11 @@ Sniper automatizado para monitorar e provisionar instâncias ARM gratuitas (`VM.
 
 ## 🔒 Segurança e Estrutura do Projeto
 
-Para garantir que nenhuma credencial ou chave privada vaze ao publicar este projeto no GitHub, o bot foi projetado para ler credenciais **externamente** ao diretório do repositório, no diretório seguro do sistema `/etc/opt/oracle_cloud`.
+Para garantir que nenhuma credencial ou chave privada vaze ao publicar este projeto no GitHub, o bot foi projetado para ler credenciais **externamente** ao diretório do repositório, no diretório seguro do sistema `/etc/opt/oracle-monitor`.
 
-### Estrutura Externa Recomendada (`/etc/opt/oracle_cloud`)
+### Estrutura Externa Recomendada (`/etc/opt/oracle-monitor`)
 ```
-/etc/opt/oracle_cloud/
+/etc/opt/oracle-monitor/
 ├── .env                          # Variáveis de ambiente (Telegram e IDs da OCI)
 └── .oci/                         # Diretório restrito (chmod 700)
     ├── config                    # Arquivo de configuração da OCI CLI
@@ -50,19 +50,19 @@ Para receber alertas no Telegram quando a instância for criada ou em caso de er
 ### 1. Chaves de API (`.oci/config` e `oci_api_key.pem`)
 1. No painel web da Oracle Cloud, clique no seu ícone de perfil (canto superior direito) ➔ **My profile / Meu perfil**.
 2. Vá na aba **API Keys / Chaves de API** (lado esquerdo) e clique em **Add API Key / Adicionar Chave de API**.
-3. Selecione **Generate API Key Pair**, faça o download da chave privada (`oci_api_key.pem`) e salve em `/etc/opt/oracle_cloud/.oci/oci_api_key.pem`.
+3. Selecione **Generate API Key Pair**, faça o download da chave privada (`oci_api_key.pem`) e salve em `/etc/opt/oracle-monitor/.oci/oci_api_key.pem`.
 4. Ajuste a permissão da chave privada no terminal:
    ```bash
-   chmod 600 /etc/opt/oracle_cloud/.oci/oci_api_key.pem
+   chmod 600 /etc/opt/oracle-monitor/.oci/oci_api_key.pem
    ```
-5. Clique em **Add**. A Oracle exibirá um bloco de texto de configuração (`[DEFAULT] user=...`). Copie esse bloco e salve no arquivo `/etc/opt/oracle_cloud/.oci/config`.
+5. Clique em **Add**. A Oracle exibirá um bloco de texto de configuração (`[DEFAULT] user=...`). Copie esse bloco e salve no arquivo `/etc/opt/oracle-monitor/.oci/config`.
 6. Certifique-se de que a linha `key_file` dentro do arquivo `config` aponte para o caminho interno no container Docker:
    ```ini
    key_file=/root/.oci/oci_api_key.pem
    ```
 
-### 2. Informações da Instância (`/etc/opt/oracle_cloud/.env`)
-Preencha o arquivo `/etc/opt/oracle_cloud/.env` com base no modelo `.env.example`:
+### 2. Informações da Instância (`/etc/opt/oracle-monitor/.env`)
+Preencha o arquivo `/etc/opt/oracle-monitor/.env` com base no modelo `.env.example`:
 
 * **`OCI_COMPARTMENT`**: OCID do seu Compartment ou Tenancy raiz. Disponível no menu **Identity & Security ➔ Compartments** (ou no seu perfil de Tenancy). Começa com `ocid1.tenancy.oc1...` ou `ocid1.compartment.oc1...`.
 * **`OCI_AD`**: Nome técnico do Availability Domain (ex: `xxxx:SA-SAOPAULO-1-AD-1`). Pode ser consultado na tela de criação de instância ou via comando OCI CLI.
@@ -82,12 +82,12 @@ docker build -t oracle-sniper .
 ```
 
 ### 2. Iniciar o Container em Segundo Plano
-Execute o bot montando o diretório seguro de credenciais em `/etc/opt/oracle_cloud`:
+Execute o bot montando o diretório seguro de credenciais em `/etc/opt/oracle-monitor`:
 ```bash
 docker run -d --name oracle-sniper \
   --restart unless-stopped \
-  --env-file /etc/opt/oracle_cloud/.env \
-  -v /etc/opt/oracle_cloud/.oci:/root/.oci:ro \
+  --env-file "/etc/opt/oracle-monitor/.env" \
+  -v "/etc/opt/oracle-monitor/.oci:/root/.oci:ro" \
   oracle-sniper
 ```
 
